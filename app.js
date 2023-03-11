@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const errors = require('./utils/errors');
 
 const app = express();
 
@@ -23,7 +24,7 @@ app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
 app.use((req, res) => {
-  res.status(404).send({ message: 'Route not found' });
+  res.status(errors.NOT_FOUND).send({ message: 'Route not found' });
 });
 
 app.listen(3000, () => {

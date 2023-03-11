@@ -1,10 +1,11 @@
 const Card = require('../models/card');
+const errors = require('../utils/errors');
 
 module.exports.getCards = (req, res) => {
   Card.find({})
     .populate('owner')
     .then((cards) => res.send({ data: cards }))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch(() => res.status(errors.SERVER_ERROR).send({ message: 'Произошла ошибка' }));
 };
 
 module.exports.createCard = (req, res) => {
@@ -14,9 +15,9 @@ module.exports.createCard = (req, res) => {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: err.message });
+        return res.status(errors.BAD_REQUEST).send({ message: 'Ошибка валидации' });
       }
-      return res.status(500).send({ message: err.message });
+      return res.status(errors.SERVER_ERROR).send({ message: 'Произошла ошибка' });
     });
 };
 
@@ -24,15 +25,15 @@ module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
       if (!card) {
-        res.status(404).send({ message: 'Card not found' });
+        return res.status(errors.NOT_FOUND).send({ message: 'Карточка не найдена' });
       }
-      res.send({ data: card });
+      return res.send({ data: card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(400).send({ message: err.message });
+        return res.status(errors.BAD_REQUEST).send({ message: 'Ошибка валидации' });
       }
-      return res.status(500).send({ message: err.message });
+      return res.status(errors.SERVER_ERROR).send({ message: 'Произошла ошибка' });
     });
 };
 
@@ -44,15 +45,15 @@ module.exports.likeCard = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        return res.status(404).send({ message: 'Card not found' });
+        return res.status(errors.NOT_FOUND).send({ message: 'Карточка не найдена' });
       }
       return res.send({ data: card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: err.message });
+        return res.status(errors.BAD_REQUEST).send({ message: 'Ошибка валидации' });
       }
-      res.status(500).send({ message: err.message });
+      return res.status(errors.SERVER_ERROR).send({ message: 'Произошла ошибка' });
     });
 };
 
@@ -64,14 +65,14 @@ module.exports.dislikeCard = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        return res.status(404).send({ message: 'Card not found' });
+        return res.status(errors.NOT_FOUND).send({ message: 'Карточка не найдена' });
       }
       return res.send({ data: card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(400).send({ message: err.message });
+        return res.status(errors.BAD_REQUEST).send({ message: 'Ошибка валидации' });
       }
-      return res.status(500).send({ message: err.message });
+      return res.status(errors.SERVER_ERROR).send({ message: 'Произошла ошибка' });
     });
 };

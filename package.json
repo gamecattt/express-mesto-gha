@@ -1,7 +1,7 @@
 {
   "name": "express-mesto-gha",
   "version": "1.0.0",
-  "description": "[![Tests](../../actions/workflows/tests-13-sprint.yml/badge.svg)](../../actions/workflows/tests-13-sprint.yml) [![Tests](../../actions/workflows/tests-14-sprint.yml/badge.svg)](../../actions/workflows/tests-14-sprint.yml)\r # Проект Mesto фронтенд + бэкенд",
+  "description": "Проект Mesto бэкенд",
   "main": "index.js",
   "scripts": {
     "lint": "npx eslint .",
@@ -12,7 +12,7 @@
     "type": "git",
     "url": "git+https://github.com/gamecattt/express-mesto-gha.git"
   },
-  "author": "",
+  "author": "GameCattt",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/gamecattt/express-mesto-gha/issues"
