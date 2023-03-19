@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const errors = require('./utils/errors');
+const { errors, celebrate, Joi } = require('celebrate');
 const {
   login,
   createUser,
@@ -17,15 +17,33 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
   useNewUrlParser: true,
 });
 
-app.post('/signin', login);
+app.post('/signin', celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required().min(8),
+  }),
+}), login);
 app.post('/signup', createUser);
-app.use(auth);
+// app.use(auth);
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
-app.use((req, res) => {
-  res.status(errors.NOT_FOUND).send({ message: 'Route not found' });
+app.use(errors());
+
+app.use((err, req, res, next) => {
+  const { statusCode = 500, message } = err;
+
+  res
+    .status(statusCode)
+    .send({
+      message: statusCode === 500
+        ? 'На сервере произошла ошибка'
+        : message,
+    });
 });
 
-app.listen(3000, () => {
+app.use((req, res) => {
+  res.status(404).send({ message: 'Route not found' });
 });
+
+app.listen(3000);
