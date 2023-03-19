@@ -1,10 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const errors = require('../utils/errors');
 const NotFoundError = require('../errors/not-found-err');
-const BadRequestError = require('../errors/bad-request-err');
-const ServerError = require('../errors/server-err');
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
@@ -16,7 +13,7 @@ module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (!user) {
-        return res.status(errors.NOT_FOUND).send({ message: 'Пользователь не найден' });
+        throw new NotFoundError('Пользователь не найден');
       }
       return res.send({ data: user });
     })
@@ -44,7 +41,7 @@ module.exports.getProfile = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
       if (!user) {
-        return res.status(errors.NOT_FOUND).send({ message: 'Пользователь не найден' });
+        throw new NotFoundError('Пользователь не найден');
       }
       return res.send({ data: user });
     })
