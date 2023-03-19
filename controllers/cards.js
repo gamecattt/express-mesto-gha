@@ -27,11 +27,11 @@ module.exports.deleteCard = (req, res) => {
       if (!card) {
         return res.status(errors.NOT_FOUND).send({ message: 'Карточка не найдена' });
       }
-      if (card.owner && card.owner._id !== req.user._id) {
+      if (!card.owner || card.owner._id !== req.user._id) {
         return res.status(403).send({ message: 'Нет прав' });
       }
 
-      return Card.findById(req.params.cardId);
+      return Card.findByIdAndRemove(req.params.cardId);
     })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
