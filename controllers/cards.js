@@ -1,27 +1,22 @@
 const Card = require('../models/card');
 const errors = require('../utils/errors');
 
-module.exports.getCards = (req, res) => {
+module.exports.getCards = (req, res, next) => {
   Card.find({})
     .populate('owner')
     .then((cards) => res.send({ data: cards }))
-    .catch(() => res.status(errors.SERVER_ERROR).send({ message: 'Произошла ошибка' }));
+    .catch(next);
 };
 
-module.exports.createCard = (req, res) => {
+module.exports.createCard = (req, res, next) => {
   const { name, link, ownerId } = req.body;
 
   Card.create({ name, link, owner: ownerId })
     .then((card) => res.send({ data: card }))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        return res.status(errors.BAD_REQUEST).send({ message: 'Ошибка валидации' });
-      }
-      return res.status(errors.SERVER_ERROR).send({ message: 'Произошла ошибка' });
-    });
+    .catch(next);
 };
 
-module.exports.deleteCard = (req, res) => {
+module.exports.deleteCard = (req, res, next) => {
   Card.findById(req.params.cardId)
     .then((card) => {
       if (!card) {
@@ -34,15 +29,10 @@ module.exports.deleteCard = (req, res) => {
       return Card.findByIdAndRemove(req.params.cardId);
     })
     .then((card) => res.send({ data: card }))
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        return res.status(errors.BAD_REQUEST).send({ message: 'Ошибка валидации' });
-      }
-      return res.status(errors.SERVER_ERROR).send({ message: 'Произошла ошибка' });
-    });
+    .catch(next);
 };
 
-module.exports.likeCard = (req, res) => {
+module.exports.likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
@@ -54,15 +44,10 @@ module.exports.likeCard = (req, res) => {
       }
       return res.send({ data: card });
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        return res.status(errors.BAD_REQUEST).send({ message: 'Ошибка валидации' });
-      }
-      return res.status(errors.SERVER_ERROR).send({ message: 'Произошла ошибка' });
-    });
+    .catch(next);
 };
 
-module.exports.dislikeCard = (req, res) => {
+module.exports.dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } },
@@ -74,10 +59,5 @@ module.exports.dislikeCard = (req, res) => {
       }
       return res.send({ data: card });
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        return res.status(errors.BAD_REQUEST).send({ message: 'Ошибка валидации' });
-      }
-      return res.status(errors.SERVER_ERROR).send({ message: 'Произошла ошибка' });
-    });
+    .catch(next);
 };
