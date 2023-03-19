@@ -6,8 +6,6 @@ const {
   login,
   createUser,
 } = require('./controllers/users');
-const BadRequestError = require('../errors/bad-request-err');
-const ServerError = require('../errors/server-err');
 
 const app = express();
 const auth = require('./middlewares/auth');
@@ -44,16 +42,14 @@ app.use('/cards', require('./routes/cards'));
 app.use(errors());
 
 app.use((err, req, res, next) => {
-  let { code: statusCode = 500 } = err;
+  let { code = 500 } = err;
+  const { message } = err;
 
-  if (statusCode === 11000) {
-    statusCode = 409;
+  if (code === 11000) {
+    code = 409;
   }
 
-  res.status(statusCode).send({
-    message: 'Произошла ошибка',
-  });
-
+  res.status(code).send({ message });
   next();
 });
 
