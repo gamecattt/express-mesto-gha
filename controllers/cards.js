@@ -22,13 +22,18 @@ module.exports.createCard = (req, res) => {
 };
 
 module.exports.deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.cardId)
+  Card.findById(req.params.cardId)
     .then((card) => {
       if (!card) {
         return res.status(errors.NOT_FOUND).send({ message: 'Карточка не найдена' });
       }
-      return res.send({ data: card });
+      if (card.owner && card.owner._id !== req.user._id) {
+        return res.status(403).send({ message: 'Нет прав' });
+      }
+
+      return Card.findById(req.params.cardId);
     })
+    .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'CastError') {
         return res.status(errors.BAD_REQUEST).send({ message: 'Ошибка валидации' });
