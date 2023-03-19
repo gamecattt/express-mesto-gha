@@ -28,7 +28,7 @@ app.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string(),
+    avatar: Joi.string().uri(),
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
   }),
@@ -42,15 +42,17 @@ app.use('/cards', require('./routes/cards'));
 app.use(errors());
 
 app.use((err, req, res, next) => {
-  const { statusCode = 500, message } = err;
+  let { code: statusCode = 500 } = err;
 
-  res
-    .status(statusCode)
-    .send({
-      message: statusCode === 500
-        ? 'На сервере произошла ошибка'
-        : message,
-    });
+  if (statusCode === 11000) {
+    statusCode = 409;
+  }
+
+  res.status(statusCode).send({
+    message: 'Произошла ошибка',
+  });
+
+  next();
 });
 
 app.use((req, res) => {

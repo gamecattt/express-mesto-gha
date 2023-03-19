@@ -24,11 +24,11 @@ module.exports.getUserById = (req, res) => {
       if (err.name === 'CastError') {
         return res.status(errors.BAD_REQUEST).send({ message: 'Ошибка валидации' });
       }
-      return res.status(errors.SERVER_ERROR).send({ message: 'Произошла ошибка' });
+      return res.status(err.SERVER_ERROR).send({ message: 'Произошла ошибка' });
     });
 };
 
-module.exports.createUser = (req, res) => {
+module.exports.createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
@@ -41,13 +41,8 @@ module.exports.createUser = (req, res) => {
       email,
       password: hash,
     }))
-    .then((user) => res.send({ data: user }))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        return res.status(errors.BAD_REQUEST).send({ message: 'Ошибка валидации' });
-      }
-      return res.status(errors.SERVER_ERROR).send({ message: 'Произошла ошибка' });
-    });
+    .then((user) => res.send({ data: user.toJSON({ useProjection: true }) }))
+    .catch(next);
 };
 
 module.exports.getProfile = (req, res) => {
