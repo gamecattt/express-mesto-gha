@@ -1,10 +1,8 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { ObjectId } = require('mongoose').Types;
 const User = require('../models/user');
 const NotFoundError = require('../errors/not-found-err');
 const UnauthorizedError = require('../errors/unauthorized-err');
-const BadRequestError = require('../errors/bad-request-err');
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
@@ -13,10 +11,6 @@ module.exports.getUsers = (req, res, next) => {
 };
 
 module.exports.getUserById = (req, res, next) => {
-  if (!ObjectId.isValid(req.params.userId)) {
-    throw new BadRequestError('Некорректный идентификатор');
-  }
-
   User.findById(req.params.userId)
     .then((user) => {
       if (!user) {
