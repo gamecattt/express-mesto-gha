@@ -10,9 +10,9 @@ module.exports.getCards = (req, res, next) => {
 };
 
 module.exports.createCard = (req, res, next) => {
-  const { name, link, ownerId } = req.body;
+  const { name, link } = req.body;
 
-  Card.create({ name, link, owner: ownerId })
+  Card.create({ name, link, owner: req.user._id })
     .then((card) => res.send({ data: card }))
     .catch(next);
 };
@@ -23,7 +23,7 @@ module.exports.deleteCard = (req, res, next) => {
       if (!card) {
         throw new NotFoundError('Карточка не найдена');
       }
-      if (!card.owner || card.owner._id !== req.user._id) {
+      if (card.owner._id.toString() !== req.user._id) {
         throw new ForbiddenError('Нет прав');
       }
 
