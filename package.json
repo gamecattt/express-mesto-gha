@@ -2,7 +2,7 @@
   "name": "express-mesto-gha",
   "version": "1.0.0",
   "description": "Проект Mesto бэкенд",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "lint": "npx eslint .",
     "start": "node app.js",
@@ -26,7 +26,6 @@
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
-    "body-parser": "^1.20.2",
     "celebrate": "^15.0.1",
     "express": "^4.18.2",
     "joi": "^17.8.4",

@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const isEmail = require('validator/lib/isEmail');
+const constants = require('../utils/constants');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -18,7 +19,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     validate: {
-      validator: (v) => /https?:\/\/(www.)?[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=]*/.test(v),
+      validator: (v) => constants.URL_REGEX.test(v),
       message: 'Неправильный формат URL',
     },
   },
@@ -34,7 +35,6 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-    minlength: 8,
     select: false,
   },
 });
