@@ -40,8 +40,8 @@ app.use(auth);
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
-app.use(() => {
-  throw new NotFoundError('Route not found');
+app.use((req, res, next) => {
+  next(new NotFoundError('Route not found'));
 });
 
 app.use(errors());
