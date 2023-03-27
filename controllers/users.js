@@ -100,7 +100,7 @@ module.exports.login = (req, res, next) => {
 
   return User.findOne({ email }).select('+password')
     .orFail(() => {
-      throw new NotFoundError('Неправильные почта или пароль');
+      throw new UnauthorizedError('Неправильные почта или пароль');
     })
     .then((user) => bcrypt.compare(password, user.password).then((matched) => {
       if (!matched) {
